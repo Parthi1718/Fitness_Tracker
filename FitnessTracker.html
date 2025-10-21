@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fitness Tracker</title>
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f9;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.app {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  width: 400px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form input, .form button {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+button {
+  background: #28a745;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #218838;
+}
+
+.stats {
+  margin: 15px 0;
+  font-weight: bold;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>🏃 Fitness Tracker</h1>
+
+    <!-- Input Form -->
+    <div class="form">
+      <input type="date" id="date">
+      <input type="number" id="steps" placeholder="Steps walked">
+      <input type="number" id="calories" placeholder="Calories burned">
+      <button id="addBtn">Add Entry</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <p>Total Steps: <span id="totalSteps">0</span></p>
+      <p>Total Calories: <span id="totalCalories">0</span></p>
+    </div>
+
+    <!-- History Table -->
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Steps</th>
+          <th>Calories</th>
+        </tr>
+      </thead>
+      <tbody id="history"></tbody>
+    </table>
+  </div>
+
+  <script>
+    // Get elements
+const dateInput = document.getElementById("date");
+const stepsInput = document.getElementById("steps");
+const caloriesInput = document.getElementById("calories");
+const addBtn = document.getElementById("addBtn");
+const historyTable = document.getElementById("history");
+const totalStepsEl = document.getElementById("totalSteps");
+const totalCaloriesEl = document.getElementById("totalCalories");
+
+// Load data from localStorage
+let entries = JSON.parse(localStorage.getItem("fitnessData")) || [];
+
+// Render function
+function render() {
+  historyTable.innerHTML = "";
+  let totalSteps = 0;
+  let totalCalories = 0;
+
+  entries.forEach(entry => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${entry.date}</td>
+      <td>${entry.steps}</td>
+      <td>${entry.calories}</td>
+    `;
+    historyTable.appendChild(row);
+
+    totalSteps += entry.steps;
+    totalCalories += entry.calories;
+  });
+
+  totalStepsEl.textContent = totalSteps;
+  totalCaloriesEl.textContent = totalCalories;
+}
+
+// Add entry
+addBtn.addEventListener("click", () => {
+  const date = dateInput.value;
+  const steps = parseInt(stepsInput.value);
+  const calories = parseInt(caloriesInput.value);
+
+  if (!date || isNaN(steps) || isNaN(calories)) {
+    alert("Please fill all fields!");
+    return;
+  }
+
+  const entry = { date, steps, calories };
+  entries.push(entry);
+
+  localStorage.setItem("fitnessData", JSON.stringify(entries));
+  render();
+
+  dateInput.value = "";
+  stepsInput.value = "";
+  caloriesInput.value = "";
+});
+
+// Initial render
+render();
+
+  </script>
+</body>
+</html>
+
+
+
+
